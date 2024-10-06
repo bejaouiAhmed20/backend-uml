@@ -34,7 +34,7 @@ app.post(
   "/addDestination",
   upload.fields([{ name: "image" }, { name: "menu" }]),
   (req, res) => {
-    const { name, tables, adresse, description } = req.body;
+    const { name, tables, adresse, description,phone,type } = req.body;
     const image = req.files["image"]
       ? `/images/${req.files["image"][0].filename}`
       : null;
@@ -42,10 +42,10 @@ app.post(
       ? `/images/${req.files["menu"][0].filename}`
       : null;
     const sql =
-      "INSERT INTO Destination (name, tables, image, adresse, description,menu) VALUES (?,?,?,?,?,?)";
+      "INSERT INTO Destination (name, tables, image, adresse, description,menu,phone,type) VALUES (?,?,?,?,?,?,?,?)";
     db.query(
       sql,
-      [name, tables, image, adresse, description, menu],
+      [name, tables, image, adresse, description, menu,phone,type],
       (err, result) => {
         if (err) {
           return res.json({ err: err });
@@ -70,6 +70,17 @@ app.delete("/delete/:id", (req, res) => {
 app.get("/destinations", (req, res) => {
   const sql = "Select * from Destination";
   db.query(sql, (err, result) => {
+    if (err) {
+      return res.json({ err: err });
+    }
+    res.json(result);
+  });
+});
+//get a specific destination
+app.get("/onedestinations/:id", (req, res) => {
+  const id = req.params.id;
+  const sql = "select * from Destination where id=?";
+  db.query(sql, id, (err, result) => {
     if (err) {
       return res.json({ err: err });
     }
