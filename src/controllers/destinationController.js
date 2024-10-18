@@ -1,17 +1,33 @@
-const { addDestination, deleteDestination, getAllDestinations, getDestinationById } = require("../models/destinationModel");
+const {
+  addDestination,
+  deleteDestination,
+  getAllDestinations,
+  getDestinationById,
+  putDestinationById,
+  getAllDestinationsDemand,
+  rejectDestinationById
+} = require("../models/destinationModel");
 const upload = require("../middleware/upload");
+const sendMail = require("../middleware/email");
 
 const createDestination = (req, res) => {
   const { name, tables, adresse, description, phone, type } = req.body;
-  const image = req.files["image"] ? `/images/${req.files["image"][0].filename}` : null;
-  const menu = req.files["menu"] ? `/images/${req.files["menu"][0].filename}` : null;
+  const image = req.files["image"]
+    ? `/images/${req.files["image"][0].filename}`
+    : null;
+  const menu = req.files["menu"]
+    ? `/images/${req.files["menu"][0].filename}`
+    : null;
 
-  addDestination({ name, tables, image, adresse, description, menu, phone, type }, (err, result) => {
-    if (err) {
-      return res.json({ err: err });
+  addDestination(
+    { name, tables, image, adresse, description, menu, phone, type },
+    (err, result) => {
+      if (err) {
+        return res.json({ err: err });
+      }
+      res.json({ message: "Destination added successfully", result });
     }
-    res.json({ message: "Destination added successfully", result });
-  });
+  );
 };
 
 const removeDestination = (req, res) => {
@@ -32,6 +48,14 @@ const listDestinations = (req, res) => {
     res.json(result);
   });
 };
+const listDestinationsDemand = (req, res) => {
+  getAllDestinationsDemand((err, result) => {
+    if (err) {
+      return res.json({ err: err });
+    }
+    res.json(result);
+  });
+};
 
 const getOneDestination = (req, res) => {
   const id = req.params.id;
@@ -42,5 +66,37 @@ const getOneDestination = (req, res) => {
     res.json(result);
   });
 };
+const acceptDestination = (req, res) => {
+  const id = req.params.id;
 
-module.exports = { createDestination, removeDestination, listDestinations, getOneDestination };
+  putDestinationById(id, (err, result) => {
+    if (err) {
+      return res.json({ err: err });
+    }
+    sendMail()
+      .then((response) =>
+        res.send({ msg: response.message, message: "updated successfully" })
+      )
+      .catch((error) => res.send(error.message));
+  });
+};
+const rejectDestination = (req, res) => {
+  const id = req.params.id;
+
+  rejectDestinationById(id, (err, result) => {
+    if (err) {
+      return res.json({ err: err });
+    }
+    
+  });
+};
+
+module.exports = {
+  createDestination,
+  removeDestination,
+  listDestinations,
+  getOneDestination,
+  acceptDestination,
+  listDestinationsDemand,
+  rejectDestination
+};
