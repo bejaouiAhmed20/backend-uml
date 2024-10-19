@@ -68,25 +68,32 @@ const getOneDestination = (req, res) => {
 };
 const acceptDestination = (req, res) => {
   const id = req.params.id;
+  const {email} = req.body;
 
   putDestinationById(id, (err, result) => {
     if (err) {
       return res.json({ err: err });
     }
-    sendMail()
+    sendMail(email,true)
       .then((response) =>
-        res.send({ msg: response.message, message: "updated successfully" })
+        res.send({ msg: response.message, message: "updated successfully",id:id })
       )
       .catch((error) => res.send(error.message));
   });
 };
 const rejectDestination = (req, res) => {
   const id = req.params.id;
+  const {email} = req.body;
 
   rejectDestinationById(id, (err, result) => {
     if (err) {
       return res.json({ err: err });
     }
+    sendMail(email,false)
+    .then((response) =>
+      res.send({ msg: response.message, message: "updated successfully",id:id })
+    )
+    .catch((error) => res.send(error.message));
     
   });
 };

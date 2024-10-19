@@ -1,7 +1,12 @@
 const express = require("express");
 const nodemailer = require("nodemailer");
+const path = require('path');
+const fs = require('fs')
 const app = express();
-function sendMail (){
+function sendMail (to,state){
+  const p = state ? '../views/accept.html':'../views/reject.html'
+  const htmlFilePath = path.join(__dirname,p );
+const htmlContent = fs.readFileSync(htmlFilePath, 'utf-8');
     return new Promise((resolve,reject)=>{
         var transporter = nodemailer.createTransport({
             service: 'gmail',
@@ -14,25 +19,9 @@ function sendMail (){
           
           var mailOptions = {
             from: 'bejaouiam25@gmail.com',
-            to: 'gorelaahmed@gmail.com',
+            to: to,
             subject: 'Your Destination has approved',
-            html: `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body>
-    <div style="width: 100%; color: white;background-color: black; hight:100px">
-        <h4 style="text-align: center;">congratulation, your demand has approved, feel free to manage your restaurant
-  </h4>
-  <h4 style="text-align: center;">and thank you</h4>
-        
-        <button style="width: 200px;height: 50;background-color: orange;">Go BACK</button>
-    </div>
-    
-</body>
-</html>`
+            html: htmlContent
           };
           
           transporter.sendMail(mailOptions, function(error, info){

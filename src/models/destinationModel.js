@@ -17,7 +17,7 @@ const getAllDestinations = (callback) => {
   db.query(sql, callback);
 };
 const getAllDestinationsDemand = (callback) => {
-  const sql = "SELECT * FROM Destination where state != 'true'";
+  const sql = "SELECT * FROM Destination where state = 'false'";
   db.query(sql, callback);
 };
 
