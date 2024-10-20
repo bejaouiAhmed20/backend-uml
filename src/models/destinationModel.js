@@ -1,11 +1,12 @@
 const db = require("../config/db");
 
 const addDestination = (data, callback) => {
-  const { name, tables, image, adresse, description, menu, phone, type } = data;
+  const { name, tables, image, adresse, description, menu, phone, type, id_owner } = data;
   const sql =
-    "INSERT INTO Destination (name, tables, image, adresse, description, menu, phone, type) VALUES (?,?,?,?,?,?,?,?)";
-  db.query(sql, [name, tables, image, adresse, description, menu, phone, type], callback);
+    "INSERT INTO Destination (name, tables, image, adresse, description, menu, phone, type, id_owner) VALUES (?,?,?,?,?,?,?,?,?)";
+  db.query(sql, [name, tables, image, adresse, description, menu, phone, type, id_owner], callback);
 };
+
 
 const deleteDestination = (id, callback) => {
   const sql = "DELETE FROM Destination WHERE id = ?";
@@ -17,7 +18,7 @@ const getAllDestinations = (callback) => {
   db.query(sql, callback);
 };
 const getAllDestinationsDemand = (callback) => {
-  const sql = "SELECT * FROM Destination where state = 'false'";
+  const sql = "SELECT Destination.id,Destination.name,image,menu,tables,adresse,description,Destination.phone,type,state,id_owner,email,password FROM `destination`,`owner` WHERE owner.id = id_owner and  state = 'false'";
   db.query(sql, callback);
 };
 

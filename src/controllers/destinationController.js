@@ -11,7 +11,7 @@ const upload = require("../middleware/upload");
 const sendMail = require("../middleware/email");
 
 const createDestination = (req, res) => {
-  const { name, tables, adresse, description, phone, type } = req.body;
+  const { name, tables, adresse, description, phone, type, id_owner} = req.body;
   const image = req.files["image"]
     ? `/images/${req.files["image"][0].filename}`
     : null;
@@ -20,7 +20,7 @@ const createDestination = (req, res) => {
     : null;
 
   addDestination(
-    { name, tables, image, adresse, description, menu, phone, type },
+    { name, tables, image, adresse, description, menu, phone, type, id_owner },
     (err, result) => {
       if (err) {
         return res.json({ err: err });
