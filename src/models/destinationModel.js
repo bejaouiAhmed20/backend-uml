@@ -13,6 +13,14 @@ const deleteDestination = (id, callback) => {
   db.query(sql, id, callback);
 };
 
+const putDestination = (id, data, callback) => {
+  const { name, tables, adresse, description, phone, type,  } = data;
+  const sql = `
+    UPDATE Destination 
+    SET name = ?, tables = ?, adresse = ?, description = ?, phone = ?, type = ? WHERE id = ?`;
+  db.query(sql, [name, tables, adresse, description, phone, type,id ], callback);
+};
+
 const getAllDestinations = (callback) => {
   const sql = "SELECT * FROM Destination";
   db.query(sql, callback);
@@ -30,8 +38,9 @@ const putDestinationById = (id,callback)=>{
   const sql = "update destination set state = 'true' where id = ?"
   db.query(sql, id, callback);
 }
+
 const rejectDestinationById = (id,callback)=>{
   const sql = "update destination set state = 'rejected' where id = ?"
   db.query(sql, id, callback);
 }
-module.exports = { addDestination, deleteDestination, getAllDestinations, getDestinationById,putDestinationById,getAllDestinationsDemand,rejectDestinationById };
+module.exports = { addDestination, deleteDestination, getAllDestinations, getDestinationById,putDestinationById,getAllDestinationsDemand,rejectDestinationById,putDestination };

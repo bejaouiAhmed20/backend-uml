@@ -3,6 +3,7 @@ const {
   deleteDestination,
   getAllDestinations,
   getDestinationById,
+  putDestination,
   putDestinationById,
   getAllDestinationsDemand,
   rejectDestinationById
@@ -11,7 +12,7 @@ const upload = require("../middleware/upload");
 const sendMail = require("../middleware/email");
 
 const createDestination = (req, res) => {
-  const { name, tables, adresse, description, phone, type, id_owner} = req.body;
+  const { name, tables, adresse, description, phone, type, id_owner } = req.body;
   const image = req.files["image"]
     ? `/images/${req.files["image"][0].filename}`
     : null;
@@ -48,6 +49,7 @@ const listDestinations = (req, res) => {
     res.json(result);
   });
 };
+
 const listDestinationsDemand = (req, res) => {
   getAllDestinationsDemand((err, result) => {
     if (err) {
@@ -66,35 +68,47 @@ const getOneDestination = (req, res) => {
     res.json(result);
   });
 };
+
+const updateDestination = (req, res) => {
+  const id = req.params.id;
+  const { name, tables, adresse, description, phone, type } = req.body;
+  putDestination(id, { name, tables, adresse, description, phone, type, }, (err, result) => {
+    if (err) {
+      return res.json({ err: err });
+    }
+    res.json({ message: "Destination updated successfully", result });
+  });
+};
+
 const acceptDestination = (req, res) => {
   const id = req.params.id;
-  const {email} = req.body;
+  const { email } = req.body;
 
   putDestinationById(id, (err, result) => {
     if (err) {
       return res.json({ err: err });
     }
-    sendMail(email,true)
+    sendMail(email, true)
       .then((response) =>
-        res.send({ msg: response.message, message: "updated successfully",id:id })
+        res.send({ msg: response.message, message: "Updated successfully", id: id })
       )
       .catch((error) => res.send(error.message));
   });
 };
+
 const rejectDestination = (req, res) => {
   const id = req.params.id;
-  const {email} = req.body;
+  const { email } = req.body;
 
   rejectDestinationById(id, (err, result) => {
     if (err) {
       return res.json({ err: err });
     }
-    sendMail(email,false)
-    .then((response) =>
-      res.send({ msg: response.message, message: "updated successfully",id:id })
-    )
-    .catch((error) => res.send(error.message));
-    
+    sendMail(email, false)
+      .then((response) =>
+        res.send({ msg: response.message, message: "Updated successfully", id: id })
+      )
+      .catch((error) => res.send(error.message));
   });
 };
 
@@ -103,6 +117,7 @@ module.exports = {
   removeDestination,
   listDestinations,
   getOneDestination,
+  updateDestination,
   acceptDestination,
   listDestinationsDemand,
   rejectDestination
