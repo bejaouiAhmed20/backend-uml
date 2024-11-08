@@ -25,6 +25,10 @@ const Menu = {
   delete: (id, callback) => {
     const query = "DELETE FROM Menu WHERE id = ?";
     db.query(query, [id], callback);
+  },
+  getAllByOwnerId:(id,callback)=>{
+    const query = `select menu.id,menu.name,price,category from menu, destination,owner WHERE id_destination = destination.id and destination.id_owner = owner.id and owner.id = ${id}`;
+    db.query(query,[id],callback);
   }
 };
 

@@ -16,6 +16,13 @@ exports.getMenus = (req, res) => {
     res.json(results);
   });
 };
+exports.getAllByOwnerId = (req,res)=>{
+  const {id}= req.params
+  Menu.getAllByOwnerId(id,(err,results)=>{
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  })
+}
 
 
 
