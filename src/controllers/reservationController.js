@@ -1,4 +1,4 @@
-const { addReservation, getAllReservations } = require("../models/reservationModel");
+const { addReservation, getAllReservations, getReservationByOwnerID, refuseReservation } = require("../models/reservationModel");
 
 const createReservation = (req, res) => {
   const idDestination = req.params.idDestination;
@@ -20,5 +20,26 @@ const listReservations = (req, res) => {
     res.json(result);
   });
 };
+const reservationById = (req, res) => {
+  const ownerId = req.params.ownerId;
+  getReservationByOwnerID(ownerId, (error, results) => {
+    if (error) {
+      res.status(500).send('Erreur lors de la récupération des réservations');
+    } else {
+      res.send(results); // Renvoie les résultats sous forme de JSON
+    }
+  });
+}
+const annulerRes = (req,res) => {
+  refuseReservation(idClient, (error, results) => {
+    if (error) {
+      res.status(500).send('Erreur lors de la récupération des réservations');
+    } else {
+      res.json(results); // Renvoie les résultats sous forme de JSON
+    }
+  });
+}
 
-module.exports = { createReservation, listReservations };
+
+
+module.exports = { createReservation, listReservations, reservationById, annulerRes };

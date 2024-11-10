@@ -1,5 +1,5 @@
 const bcrypt = require("bcrypt");
-const { findOwnerByEmail, addOwner } = require("../models/ownerModel");
+const { findOwnerByEmail, addOwner,findOwnerById,updateOwner,deleteOwnerById,getAllOwners } = require("../models/ownerModel");
 
 const signup = (req, res) => {
   const { name, email, password, phone } = req.body;
@@ -31,6 +31,33 @@ const signup = (req, res) => {
     });
   });
 };
+const getOwnerById = (req, res) => {
+  const id = req.params.id; 
+  findOwnerById(id, (err, result) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(result);
+  });
+};
+
+const editProfile = (req, res) => {
+  const { id } = req.params;
+  const { name, email, phone, password } = req.body;
+
+  // Hash the new password if provided
+  if (password) {
+    bcrypt.hash(password, 10, (err, hashedPassword) => {
+      if (err) {
+        console.error('Error hashing password:', err);
+        return res.status(500).json({ message: 'Internal Server Error' });
+      }
+      // Update owner with hashed password
+      updateOwner(id, name, email, phone, hashedPassword, res);
+    });
+  } else {
+    // Update owner without changing password
+    updateOwner(id, name, email, phone, null, res);
+  }
+};
 
 const login = (req, res) => {
   const { email, password } = req.body;
@@ -61,5 +88,51 @@ const login = (req, res) => {
     });
   });
 };
+const getAllOwnersController = (req, res) => {
+  getAllOwners((err, result) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
 
-module.exports = { signup, login };
+    res.status(200).json({ owners: result });
+  });
+};
+
+// const updateOwnerByIdController = (req, res) => {
+//   const { id } = req.params;
+//   const { name, email, phone } = req.body;
+
+//   updateOwnerById(id, { name, email, phone }, (err, result) => {
+//     if (err) {
+//       console.error(err);
+//       return res.status(500).json({ message: "Error updating owner" });
+//     }
+
+//     if (result.affectedRows === 0) {
+//       return res.status(404).json({ message: "Owner not found" });
+//     }
+
+//     res.status(200).json({ message: "Owner updated successfully" });
+//   });
+// };
+
+const deleteOwnerByIdController = (req, res) => {
+  const { id } = req.params;
+
+  deleteOwnerById(id, (err, result) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ message: "Error deleting owner" });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Owner not found" });
+    }
+
+    res.status(200).json({ message: "Owner deleted successfully" });
+  });
+};
+
+
+module.exports = { signup, login,getOwnerById,editProfile,deleteOwnerByIdController,getAllOwnersController };

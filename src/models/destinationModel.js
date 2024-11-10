@@ -1,10 +1,10 @@
 const db = require("../config/db");
 
 const addDestination = (data, callback) => {
-  const { name, tables, image, adresse, description, menu, phone, type, id_owner } = data;
+  const { name, tables, image, adresse, description, phone, type, id_owner } = data;
   const sql =
-    "INSERT INTO Destination (name, tables, image, adresse, description, menu, phone, type, id_owner) VALUES (?,?,?,?,?,?,?,?,?)";
-  db.query(sql, [name, tables, image, adresse, description, menu, phone, type, id_owner], callback);
+    "INSERT INTO Destination (name, tables, image, adresse, description, phone, type, id_owner) VALUES (?,?,?,?,?,?,?,?)";
+  db.query(sql, [name, tables, image, adresse, description, phone, type, id_owner], callback);
 };
 
 
@@ -22,11 +22,11 @@ const putDestination = (id, data, callback) => {
 };
 
 const getAllDestinations = (callback) => {
-  const sql = "SELECT * FROM Destination";
+  const sql = "SELECT * FROM Destination where state = 'true'";
   db.query(sql, callback);
 };
 const getAllDestinationsDemand = (callback) => {
-  const sql = "SELECT Destination.id,Destination.name,image,menu,tables,adresse,description,Destination.phone,type,state,id_owner,email,password FROM `destination`,`owner` WHERE owner.id = id_owner and  state = 'false'";
+  const sql = "SELECT Destination.id,Destination.name,image,tables,adresse,description,Destination.phone,type,state,id_owner,email,password FROM `destination`,`owner` WHERE owner.id = id_owner and  state = 'false'";
   db.query(sql, callback);
 };
 
@@ -39,8 +39,8 @@ const putDestinationById = (id,callback)=>{
   db.query(sql, id, callback);
 }
 
-const rejectDestinationById = (id,callback)=>{
-  const sql = "update destination set state = 'rejected' where id = ?"
-  db.query(sql, id, callback);
-}
+const rejectDestinationById = (id, callback) => {
+  const sql = "DELETE FROM destination WHERE id = ?";
+  db.query(sql, [id], callback);
+};
 module.exports = { addDestination, deleteDestination, getAllDestinations, getDestinationById,putDestinationById,getAllDestinationsDemand,rejectDestinationById,putDestination };

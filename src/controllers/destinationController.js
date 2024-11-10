@@ -16,12 +16,9 @@ const createDestination = (req, res) => {
   const image = req.files["image"]
     ? `/images/${req.files["image"][0].filename}`
     : null;
-  const menu = req.files["menu"]
-    ? `/images/${req.files["menu"][0].filename}`
-    : null;
 
   addDestination(
-    { name, tables, image, adresse, description, menu, phone, type, id_owner },
+    { name, tables, image, adresse, description, phone, type, id_owner },
     (err, result) => {
       if (err) {
         return res.json({ err: err });
@@ -106,7 +103,7 @@ const rejectDestination = (req, res) => {
     }
     sendMail(email, false)
       .then((response) =>
-        res.send({ msg: response.message, message: "Updated successfully", id: id })
+        res.send({ msg: response.message, message: "deleted successfully", id: id })
       )
       .catch((error) => res.send(error.message));
   });
