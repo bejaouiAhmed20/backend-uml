@@ -6,13 +6,15 @@ const {
   putDestination,
   putDestinationById,
   getAllDestinationsDemand,
-  rejectDestinationById
+  rejectDestinationById,
+  getDestinationbyOwnerId
 } = require("../models/destinationModel");
 const upload = require("../middleware/upload");
 const sendMail = require("../middleware/email");
 
 const createDestination = (req, res) => {
-  const { name, tables, adresse, description, phone, type, id_owner } = req.body;
+  const { name, tables, adresse, description, phone, type, id_owner } =
+    req.body;
   const image = req.files["image"]
     ? `/images/${req.files["image"][0].filename}`
     : null;
@@ -46,6 +48,16 @@ const listDestinations = (req, res) => {
     res.json(result);
   });
 };
+const listDestinationsByownerId = (req, res) => {
+  const id = req.params.id;
+
+  getDestinationbyOwnerId(id,(err, result) => {
+    if (err) {
+      return res.json({ err: err });
+    }
+    res.json(result);
+  });
+};
 
 const listDestinationsDemand = (req, res) => {
   getAllDestinationsDemand((err, result) => {
@@ -69,12 +81,16 @@ const getOneDestination = (req, res) => {
 const updateDestination = (req, res) => {
   const id = req.params.id;
   const { name, tables, adresse, description, phone, type } = req.body;
-  putDestination(id, { name, tables, adresse, description, phone, type, }, (err, result) => {
-    if (err) {
-      return res.json({ err: err });
+  putDestination(
+    id,
+    { name, tables, adresse, description, phone, type },
+    (err, result) => {
+      if (err) {
+        return res.json({ err: err });
+      }
+      res.json({ message: "Destination updated successfully", result });
     }
-    res.json({ message: "Destination updated successfully", result });
-  });
+  );
 };
 
 const acceptDestination = (req, res) => {
@@ -87,7 +103,11 @@ const acceptDestination = (req, res) => {
     }
     sendMail(email, true)
       .then((response) =>
-        res.send({ msg: response.message, message: "Updated successfully", id: id })
+        res.send({
+          msg: response.message,
+          message: "Updated successfully",
+          id: id,
+        })
       )
       .catch((error) => res.send(error.message));
   });
@@ -103,7 +123,11 @@ const rejectDestination = (req, res) => {
     }
     sendMail(email, false)
       .then((response) =>
-        res.send({ msg: response.message, message: "deleted successfully", id: id })
+        res.send({
+          msg: response.message,
+          message: "Deleted successfully",
+          id: id,
+        })
       )
       .catch((error) => res.send(error.message));
   });
@@ -117,5 +141,6 @@ module.exports = {
   updateDestination,
   acceptDestination,
   listDestinationsDemand,
-  rejectDestination
+  rejectDestination,
+  listDestinationsByownerId
 };
