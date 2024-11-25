@@ -13,7 +13,6 @@ const {
   listDestinationsByownerId
 } = require("../controllers/destinationController");
 
-// Routes
 router.post(
   "/add",
   upload.fields([{ name: "image" }, { name: "menu" }]),

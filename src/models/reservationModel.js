@@ -17,7 +17,7 @@ const getReservationByOwnerID = (ownerId, callback) => {
     FROM Reservation
     JOIN Destination ON Reservation.idRestaurant = Destination.id
     JOIN Owner ON Destination.id_owner = Owner.id
-    WHERE Owner.id = ?;
+    WHERE Owner.id = ? and status = 'attente';
   `;
   db.query(sql, [ownerId], (err, results) => {
     if (err) {
@@ -31,7 +31,7 @@ const getReservationByOwnerID = (ownerId, callback) => {
 };
 
 const acceptReservation = (reservationId, callback) => {
-  const sql = "UPDATE Reservation SET status = 'accepted' WHERE id = ?";
+  const sql = "UPDATE Reservation SET status = 'accepted' WHERE idReservation = ?";
   db.query(sql, [reservationId], (err, results) => {
     if (err) {
       console.error('Error updating reservation status:', err);
@@ -45,7 +45,7 @@ const acceptReservation = (reservationId, callback) => {
 };
 
 const refuseReservation = (reservationId, callback) => {
-  const sql = "DELETE FROM Reservation WHERE id = ?";
+  const sql = "DELETE FROM Reservation WHERE idReservation = ?";
   db.query(sql, [reservationId], (err, results) => {
     if (err) {
       console.error('Error deleting reservation:', err);

@@ -11,7 +11,6 @@ const addClient = (firstName, lastName, email, phone, password, callback) => {
   const insertQuery = `INSERT INTO client (firstName, lastName, email, phone, password) VALUES (?, ?, ?, ?, ?)`;
   db.query(insertQuery, [firstName, lastName, email, phone, password], callback);
 };
-
 // Get all clients
 const getAllClients = (callback) => {
   const sql = "SELECT * FROM client";
